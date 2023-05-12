@@ -1,4 +1,4 @@
-# Unofficial implementation of miSRGAN (2021 Medical Image Analysis paper)
+# Unofficial implementation of miSRGAN (2021 Medical Image Analysis)
 
 ``This repository provide a pytorch version implementation of paper "3D Registration of pre-surgical prostate MRI and histopathology images via super-resolution volume reconstruction".
 
