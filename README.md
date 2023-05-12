@@ -14,9 +14,9 @@ Following the paper, we only take a subset with all T2w related volumes to train
 ## Quick Start
 - Remanage dataset
   - We regenerates `.pkl` files to save the volumes before start training.
-  - You should follow the python script in `./revise_datasets` dir to generate your own datasets. Pay attention to the output `meta_data.json` file, which is important for Dataloader during training.
+  - You should follow the python script in `./revise_datasets` dir to generate your own datasets. Pay attention to the output `meta_data.json` file, which is important for Dataloader during the coming training.
 
-- Then you can start the multi GPU training:
+- Then you can start the multi GPU training with this commmands:
 ```
 torchrun  \
     --standalone    \
@@ -38,6 +38,17 @@ You need to change the argument `data_path` to your generated `meta_data.json` f
 
 ## Citation
 ```
- @article{Sood_Shao_Kunder_Teslovich_Wang_Soerensen_Madhuripan_Jawahar_Brooks_Ghanouni_et al._2021, title={3D Registration of pre-surgical prostate MRI and histopathology images via super-resolution volume reconstruction}, volume={69}, ISSN={13618415}, DOI={10.1016/j.media.2021.101957}, journal={Medical Image Analysis}, author={Sood, Rewa R. and Shao, Wei and Kunder, Christian and Teslovich, Nikola C. and Wang, Jeffrey B. and Soerensen, Simon J.C. and Madhuripan, Nikhil and Jawahar, Anugayathri and Brooks, James D. and Ghanouni, Pejman and Fan, Richard E. and Sonn, Geoffrey A. and Rusu, Mirabela}, year={2021}, month={Apr}, pages={101957}, language={en} }
+ @article{Sood_Shao_Kunder_Teslovich_Wang_Soerensen_Madhuripan_Jawahar_Brooks_Ghanouni_et al._2021, 
+ title={3D Registration of pre-surgical prostate MRI and histopathology images via super-resolution volume reconstruction}, 
+ volume={69}, 
+ ISSN={13618415}, 
+ DOI={10.1016/j.media.2021.101957}, 
+ journal={Medical Image Analysis}, 
+ author={Sood, Rewa R. and Shao, Wei and Kunder, Christian and Teslovich, Nikola C. and Wang, Jeffrey B. and Soerensen, Simon J.C. and Madhuripan, Nikhil and Jawahar, Anugayathri and Brooks, James D. and Ghanouni, Pejman and Fan, Richard E. and Sonn, Geoffrey A. and Rusu, Mirabela}, 
+ year={2021}, 
+ month={Apr}, 
+ pages={101957}, 
+ language={en} 
+ }
 
 ```
