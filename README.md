@@ -14,7 +14,7 @@ Following the paper, we only take a subset with all T2w related volumes to train
 ## Quick Start
 - Remanage dataset
   - We regenerates `.pkl` files to save the volumes before start training.
-  - You should follow the python script in `./revise_datasets` dir to generate your own datasets, especially the output `meta_data.json` file, which is important for Dataloader during training.
+  - You should follow the python script in `./revise_datasets` dir to generate your own datasets. Pay attention to the output `meta_data.json` file, which is important for Dataloader during training.
 
 - Then you can start the multi GPU training:
 ```
