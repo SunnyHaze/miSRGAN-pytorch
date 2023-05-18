@@ -46,8 +46,7 @@ def train_one_epoch(g_model: torch.nn.Module,
 
     
     # b_prev : batch previous image......
-    for data_iter_step, (b_prev, b_next, b_gt) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
-        
+    for data_iter_step, (b_prev, b_gt, b_next) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
         
         accum_iter = args.accum_iter
     
@@ -90,7 +89,7 @@ def train_one_epoch(g_model: torch.nn.Module,
             pass
         else:
             d_optimizer.zero_grad()
-            d_loss.backward(retain_graph=True)
+            d_loss.backward()
             d_optimizer.step()
 
         # =====update generator====
