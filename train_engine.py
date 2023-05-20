@@ -43,8 +43,6 @@ def train_one_epoch(g_model: torch.nn.Module,
     if log_writer is not None:
         print('log_dir: {}'.format(log_writer.log_dir))
         
-
-    
     # b_prev : batch previous image......
     for data_iter_step, (b_prev, b_gt, b_next) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
         
@@ -55,9 +53,7 @@ def train_one_epoch(g_model: torch.nn.Module,
             lr_sched.adjust_learning_rate(g_optimizer, data_iter_step / len(data_loader) + epoch, args)
             lr_sched.adjust_learning_rate(d_optimizer, data_iter_step / len(data_loader) + epoch, args)  
         
-        
         # ====update discriminator====
-
         b_prev, b_next, b_gt = b_prev.to(device), b_next.to(device), b_gt.to(device)
         
         b_sr = g_model(b_prev, b_next) # super resoluion
@@ -73,7 +69,6 @@ def train_one_epoch(g_model: torch.nn.Module,
         logits_fake = logits_concate[:n_2, :]
         logits_real = logits_concate[n_2:, :]
     
-    
         # ----discriminator loss-----
         d_loss_real = F.binary_cross_entropy_with_logits(logits_real, torch.ones_like(logits_real))
         d_loss_fake = F.binary_cross_entropy_with_logits(logits_fake, torch.zeros_like(logits_fake))
@@ -81,7 +76,7 @@ def train_one_epoch(g_model: torch.nn.Module,
         d_loss_real_value = d_loss_real.item()
         d_loss_fake_value = d_loss_fake.item()
     
-        d_loss = d_loss_real + d_loss_fake
+        d_loss = 0.5 * d_loss_real + 0.5 * d_loss_fake
     
         d_loss_value = d_loss.item()
         
@@ -116,7 +111,6 @@ def train_one_epoch(g_model: torch.nn.Module,
         g_mse_loss_value = g_mse_loss.item()
     
         # ----VGG perceptual loss----
-        
         b_gt = b_gt.repeat_interleave(repeats=3, dim=1) # B, 3, 224, 224
         b_sr = b_sr.repeat_interleave(repeats=3, dim=1) # B, 3, 224, 224
         
@@ -145,16 +139,15 @@ def train_one_epoch(g_model: torch.nn.Module,
         # Log to metric
         lr = g_optimizer.param_groups[0]["lr"]
         # save to log.txt
-        metric_logger.update(lr=lr)
-        metric_logger.update(d_loss_real=d_loss_real_value)
-        metric_logger.update(d_loss_fake=d_loss_fake_value)
-        metric_logger.update(d_loss=d_loss_value)
-        
-        metric_logger.update(g_gan_loss = g_gan_loss_value)
-        metric_logger.update(g_mse_loss=g_mse_loss_value)
-        metric_logger.update(g_vgg_loss=g_vgg_loss_value)
-        metric_logger.update(g_loss=g_loss_value)
-                
+        metric_logger.update(lr=lr,
+                             d_loss_real=d_loss_real_value,
+                             d_loss_fake=d_loss_fake_value,
+                             d_loss=d_loss_value,
+                             g_gan_loss = g_gan_loss_value,
+                             g_mse_loss=g_mse_loss_value,
+                             g_vgg_loss=g_vgg_loss_value,
+                             g_loss=g_loss_value,                      
+                            )
         d_loss_real_reduce = misc.all_reduce_mean(d_loss_real_value)
         d_loss_fake_reduce = misc.all_reduce_mean(d_loss_fake_value)
         d_loss_reduce = misc.all_reduce_mean(d_loss_value)
@@ -165,7 +158,7 @@ def train_one_epoch(g_model: torch.nn.Module,
         g_loss_reduce = misc.all_reduce_mean(g_loss_value)
         
         
-        metric_logger.synchronize_between_processes()
+
         if log_writer is not None and (data_iter_step + 1) % accum_iter == 0: 
             epoch_1000x = int((data_iter_step / len(data_loader) + epoch) * 1000)
             log_writer.add_scalar("lr/lr", lr, epoch_1000x)

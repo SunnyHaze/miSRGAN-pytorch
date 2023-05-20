@@ -24,15 +24,16 @@ torchrun  \
     --nproc_per_node=2 \
 train_main.py \
     --world_size 2 \
-    --data_path "/root/Dataset/prostate/meta_data.json" \
-    --batch_size 8 \
+    --data_path "/root/Dataset/prostate" \
+    --meta_data_path /root/Dataset/prostate_train.json \
+    --batch_size 4 \
     --epochs 70 \
     --lr 1e-4 \
     --weight_decay 0.05 \
     --warmup_epochs 2 \
-    --output_dir ./output_dir_2/ \
-    --log_dir ./output_dir_2/ \
-2> train_error_2.log 1>train_logs_2.log
+    --output_dir ./output_dir_3/ \
+    --log_dir ./output_dir_3/ \
+2> train_error_3.log 1>train_logs_3.log
 ```
 You need to change the argument `data_path` to your generated `meta_data.json` file.
 

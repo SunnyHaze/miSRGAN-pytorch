@@ -16,20 +16,20 @@ class ResidualBlock(nn.Module):
         
         super().__init__()
         self.conv1 = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels= embedding_channels,
+            in_channels = in_channels,
+            out_channels = embedding_channels,
             kernel_size = kernel_size,
-            stride= stride,
-            padding= padding,
+            stride = stride,
+            padding = padding,
         )
         self.bn1 = nn.BatchNorm2d(embedding_channels)
         self.relu1 = nn.ReLU()
         self.conv2 =  nn.Conv2d(
-            in_channels=embedding_channels,
-            out_channels=out_channels,
+            in_channels =embedding_channels,
+            out_channels =out_channels,
             kernel_size = kernel_size,
-            stride= stride,
-            padding= padding,
+            stride = stride,
+            padding = padding,
         )
         self.bn2 = nn.BatchNorm2d(out_channels)
         self.relu2 = nn.ReLU()
@@ -138,7 +138,6 @@ class SRGAN_g(nn.Module):
         pred = self.predict_conv(combined)
         pred = self.predict_act(pred)
         return pred
-
 
 class ConvWithNorm(nn.Module):
     def __init__(self,
@@ -259,5 +258,5 @@ if __name__ == '__main__':
     p = vgg19_perceptual_loss()
     c = p( (n+1)/2 )    
     print(c.shape)
-    print( c   )
+    print(c)
     # print(a.shape)

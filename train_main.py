@@ -76,9 +76,9 @@ def get_args_parser():
                         help='epochs to warmup LR')
 
     # Dataset parameters
-    parser.add_argument('--data_path', default='/root/Dataset/CASIA2.0_revised/', type=str,
-                        help='dataset path')
-    parser.add_argument('--test_data_path', default='/root/Dataset/CASIA1.0 dataset', type=str,
+    parser.add_argument('--meta_data_path', default='/root/Dataset/CASIA2.0_revised/', type=str,
+                        help='meta data json file path')
+    parser.add_argument('--data_path', default='/root/Dataset/CASIA1.0 dataset', type=str,
                         help='dataset path')
 
     parser.add_argument('--output_dir', default='./output_dir',
@@ -135,7 +135,11 @@ def main(args):
     
     # ---- dataset with crop augmentation ----
     # if os.path.isdir(args.data_path):
-    dataset_train = utils.datasets.sr_dataset([args.data_path])
+    dataset_train = utils.datasets.sr_dataset(
+        meta_data_path= args.meta_data_path,
+        data_path=
+        args.data_path
+        )
     # else:
     #     dataset_train = utils.datasets.huge_dataset(args.data_path,transform=train_transform, edge_width = args.edge_broaden, if_return_shape = True, if_return_type=True)
         
@@ -244,7 +248,8 @@ def main(args):
                 "optimizer_g" : optimizer_g.state_dict(),
                 "optimizer_d" : optimizer_d.state_dict()
             }
-            torch.save(save_temp, f"checkpoint-{epoch}.pt")
+            output_path = os.path.join(args.output_dir, f"checkpoint-{epoch}.pt")
+            torch.save(save_temp, output_path)
             
             # misc.save_model(
             #     args=args, model=model, model_without_ddp=model_without_ddp, optimizer=optimizer,
