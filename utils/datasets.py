@@ -9,21 +9,26 @@ import torch
 import os
 class sr_dataset(Dataset):
     def __init__(self, data_path, meta_data_path, output_size = (224, 224), if_return_index=False ) -> None:
+        # list for storage all parsed datas.
+        self.data_index = []
         self.data_lenth = []
         self.data_path = []
         
         prefix_temp = -1 # start from 0
-        self.prefix_sum = []
+        self.prefix_sum = [] # list for storage prefix sum
         
         self.root_path = data_path
         self.meta_data_path = meta_data_path
     
         with open(meta_data_path, "r") as f:
             self.meta_data = json.load(f)   # list of [index:int, file_name:str ,shape(n, h, w)]
-            for index, file_name , (n, h, w) in self.meta_data:      
+            for index, file_name , (n, h, w) in self.meta_data:  
+                self.data_index.append(index)
                 self.data_lenth.append(n)
                 self.data_path.append(os.path.join(self.root_path, file_name))
+                
                 prefix_temp += (n-2)
+                
                 self.prefix_sum.append(prefix_temp)
         
         self.length = prefix_temp
@@ -67,7 +72,7 @@ class sr_dataset(Dataset):
             target_img = self._transform_image(target_img)
             next_img = self._transform_image(next_img)
         if self.if_return_index:
-            return prev_img, target_img, next_img, pkl_index, in_img_index
+            return prev_img, target_img, next_img, self.data_index[pkl_index], in_img_index
         
         return prev_img, target_img, next_img
     

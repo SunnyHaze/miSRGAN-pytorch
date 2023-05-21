@@ -137,8 +137,7 @@ def main(args):
     # if os.path.isdir(args.data_path):
     dataset_train = utils.datasets.sr_dataset(
         meta_data_path= args.meta_data_path,
-        data_path=
-        args.data_path
+        data_path=args.data_path
         )
     # else:
     #     dataset_train = utils.datasets.huge_dataset(args.data_path,transform=train_transform, edge_width = args.edge_broaden, if_return_shape = True, if_return_type=True)

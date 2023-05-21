@@ -37,6 +37,22 @@ train_main.py \
 ```
 You need to change the argument `data_path` to your generated `meta_data.json` file.
 
+## Evaluation
+torchrun  \
+    --standalone    \
+    --nnodes=1     \
+    --nproc_per_node=2 \
+evaluate_main.py \
+    --world_size 2 \
+    --data_path "/root/Dataset/prostate" \
+    --meta_data_path /root/Dataset/prostate_test.json \
+    --checkpoint_path /root/workspace/srGAN/output_dir_3 \
+    --batch_size 4 \
+    --epochs 70 \
+    --output_dir ./eval_dir_3/ \
+    --log_dir ./eval_dir_3/ \
+2> test_error_3.log 1>test_logs_3.log
+
 ## Citation
 ```
  @article{Sood_Shao_Kunder_Teslovich_Wang_Soerensen_Madhuripan_Jawahar_Brooks_Ghanouni_et al._2021, 

@@ -2,3 +2,6 @@ __pycache__
 output_dir*
 *.pt
 *.log
+eval_dir*
+
+*.png
