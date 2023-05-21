@@ -80,12 +80,13 @@ def train_one_epoch(g_model: torch.nn.Module,
     
         d_loss_value = d_loss.item()
         
-        if epoch < 20:
-            pass
-        else:
+        if epoch >= 20 and epoch % 4 == 0:
             d_optimizer.zero_grad()
             d_loss.backward()
             d_optimizer.step()
+        else:
+            pass
+
 
         # =====update generator====
         b_prev, b_next, b_gt = b_prev.to(device), b_next.to(device), b_gt.to(device)

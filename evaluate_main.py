@@ -64,7 +64,9 @@ def test_one_epoch(model: torch.nn.Module,
         # Inference and save images
         name_list = []
         psnr_list = []
+        ref_psnr_list = []
         psnr_sum = 0
+        ref_psnr_sum = 0
         cnt = 0
         for data_iter_step, (b_prev, b_gt, b_next, pkl_index, in_img_index) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
             b_prev, b_next, b_gt = b_prev.to(device), b_next.to(device), b_gt.to(device) # N, 1, H, W
@@ -77,7 +79,7 @@ def test_one_epoch(model: torch.nn.Module,
             for i in range(N):
                 prev, gt, sr, next = b_prev[i].detach(), b_gt[i], b_sr[i].detach(), b_next[i].detach()
                 combine_name = f"{pkl_index[i]}_{in_img_index[i]}.png"
-                if i % 3 == 0:
+                if i % 8 == 0:
                     combine = torch.concat([prev, gt, sr, next], dim = 2)
                     # print("max:", torch.max(combine))
                     # print("min:", torch.min(combine))
@@ -88,18 +90,27 @@ def test_one_epoch(model: torch.nn.Module,
                     output_full_path = os.path.join(test_path, combine_name)
             
                     plt.imsave(output_full_path, combine , cmap='gray')
-                
+                    
+                local_prev = prev[0].detach().cpu().numpy()
                 local_gt = gt[0].detach().cpu().numpy()
                 local_sr = sr[0].detach().cpu().numpy()
                 psnr_score = psnr_f(local_gt, local_sr)
+                reference_score = psnr_f(local_prev, local_gt)
                 name_list.append(combine_name)
                 psnr_list.append(psnr_score)
+                ref_psnr_list.append(reference_score)
                 cnt += 1
                 psnr_sum += psnr_score
+                ref_psnr_sum += reference_score
                 
         avg_psnr_score = psnr_sum / cnt
+        avg_ref_score = ref_psnr_sum / cnt
         avg_psnr_score_reduce = misc.all_reduce_mean(avg_psnr_score)
-        metric_logger.update(avg_psnr = avg_psnr_score_reduce)
+        avg_ref_score_reduce = misc.all_reduce_mean(avg_ref_score)
+        metric_logger.update(
+            avg_psnr = avg_psnr_score_reduce,
+            avg_ref_psnr = avg_ref_score_reduce
+        )
         
         with open(os.path.join(test_path, f"device{rank}_psnr.json"), "w") as f:
             results = { 
@@ -112,6 +123,7 @@ def test_one_epoch(model: torch.nn.Module,
         metric_logger.synchronize_between_processes()          
         if log_writer is not None:
             log_writer.add_scalar('test/psnr', avg_psnr_score_reduce, ckpt_epoch)
+            log_writer.add_scalar("test/ref_psnr", avg_ref_score_reduce, ckpt_epoch)
 
     print("Averaged stats:", metric_logger)
     return {k: meter.global_avg for k, meter in metric_logger.meters.items()}

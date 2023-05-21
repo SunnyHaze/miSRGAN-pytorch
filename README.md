@@ -47,7 +47,7 @@ evaluate_main.py \
     --data_path "/root/Dataset/prostate" \
     --meta_data_path /root/Dataset/prostate_test.json \
     --checkpoint_path /root/workspace/srGAN/output_dir_3 \
-    --batch_size 4 \
+    --batch_size 32 \
     --epochs 70 \
     --output_dir ./eval_dir_3/ \
     --log_dir ./eval_dir_3/ \
