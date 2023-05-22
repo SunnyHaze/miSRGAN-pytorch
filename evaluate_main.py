@@ -60,7 +60,6 @@ def test_one_epoch(model: torch.nn.Module,
         print_freq = 20
         header = 'Test_infer: [{}]'.format(ckpt_epoch)
         
-        
         # Inference and save images
         name_list = []
         psnr_list = []

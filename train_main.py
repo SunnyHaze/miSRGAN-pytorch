@@ -36,30 +36,17 @@ from train_engine import train_one_epoch
 
 
 def get_args_parser():
-    parser = argparse.ArgumentParser('IML-ViT training', add_help=False)
+    parser = argparse.ArgumentParser('miSRGAN training', add_help=False)
     parser.add_argument('--batch_size', default=64, type=int,
-                        help='Batch size per GPU (effective batch size is batch_size * accum_iter * # gpus')
-    parser.add_argument('--test_batch_size', default=2, type=int,)
-    #
-    parser.add_argument('--vit_pretrain_path', default = '/root/workspace/IML-ViT/pretrained-weights/mae_pretrain_vit_base.pth', type=str, help='path to vit pretrain model by MAE')
-    
-    parser.add_argument('--perceptual_loss_path', default = '/root/workspace/IML-ViT/pretrained-weights/vgg16_features.pt', type=str, help='path to perceptual loss model')
+                        help='Batch size per GPU')
     
     parser.add_argument('--epochs', default=200, type=int)
-    parser.add_argument('--test_period', default=20, type=int)
-    parser.add_argument('--accum_iter', default=1, type=int,
-                        help='Accumulate gradient iterations (for increasing the effective batch size under memory constraints)')
-
-    parser.add_argument('--mask_ratio', default=0.75, type=float,
-                        help='Masking ratio (percentage of removed patches).')
-
+    parser.add_argument('--update_d_period', default=5, type=int, help="How many epoch for update discriminator periodically. Can balance the discriminator and the generator during training. ")
+    
     parser.add_argument('--norm_pix_loss', action='store_true',
                         help='Use (per-patch) normalized pixels as targets for computing loss')
     parser.set_defaults(norm_pix_loss=False)
 
-    parser.add_argument('--edge_broaden', default=7, type=int,
-                        help='Edge broaden size (in pixels) for edge_generator.')
-    # Optimizer parameters
     parser.add_argument('--weight_decay', type=float, default=0.05,
                         help='weight decay (default: 0.05)')
 
@@ -79,7 +66,7 @@ def get_args_parser():
     parser.add_argument('--meta_data_path', default='/root/Dataset/CASIA2.0_revised/', type=str,
                         help='meta data json file path')
     parser.add_argument('--data_path', default='/root/Dataset/CASIA1.0 dataset', type=str,
-                        help='dataset path')
+                        help='dataset path(PKL file directory)')
 
     parser.add_argument('--output_dir', default='./output_dir',
                         help='path where to save, empty for no saving')
@@ -126,23 +113,12 @@ def main(args):
     np.random.seed(seed)
 
     cudnn.benchmark = True
-
-
     import utils.datasets
 
-    # ---- without crop augmentation ----
-    # dataset_train = util.datasets.mani_dataset(args.data_path, transform_train= transform_train, transform_mask = transform_mask)
-    
-    # ---- dataset with crop augmentation ----
-    # if os.path.isdir(args.data_path):
     dataset_train = utils.datasets.sr_dataset(
         meta_data_path= args.meta_data_path,
         data_path=args.data_path
         )
-    # else:
-    #     dataset_train = utils.datasets.huge_dataset(args.data_path,transform=train_transform, edge_width = args.edge_broaden, if_return_shape = True, if_return_type=True)
-        
-    # dataset_test = utils.datasets.mani_dataset(args.test_data_path, transform=test_transform, edge_width=args.edge_broaden, if_return_shape=True, if_return_type=True)
     
     print(dataset_train)
 
@@ -152,11 +128,8 @@ def main(args):
         sampler_train = torch.utils.data.DistributedSampler(
             dataset_train, num_replicas=num_tasks, rank=global_rank, shuffle=True
         )
-        # sampler_test = torch.utils.data.DistributedSampler(
-        #     dataset_test, num_replicas=num_tasks, rank=global_rank, shuffle=True
-        # )
         print("Sampler_train = %s" % str(sampler_train))
-        # print("Sampler_test = %s" % str(sampler_test))
+
     else:
         sampler_train = torch.utils.data.RandomSampler(dataset_train)
 
@@ -173,7 +146,6 @@ def main(args):
         pin_memory=args.pin_mem,
         drop_last=True,
     )
-    
     
     # define the model
     model_g = misrgan_model.SRGAN_g()

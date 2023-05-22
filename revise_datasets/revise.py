@@ -7,27 +7,22 @@ from tqdm import tqdm
 import random
 
 """
-Change the paths below to your own path of Prostate datasets.
+Hint : Change the paths below to your own path of Prostate datasets!!!
 """
-
 meta_data_list = [
-    [r'G:\Datasets\Medical\datas\manifest-gJIZVVFt6412408718812805737\metadata.csv', "T2WTSEAX" ],
-    [r'G:\Datasets\Medical\datas\manifest-hjL8tlLc1556886850502670511\metadata.csv', "t2tsetra" ],
-    [r'G:\Datasets\Medical\datas\manifest-MQ0R2nDM7840353659486226295\metadata.csv', "t2tsetra"]
+    [r'G:\Datasets\Medical\datas\manifest-gJIZVVFt6412408718812805737\metadata.csv', "T2WTSEAX" ], # second elements is for filterate the targets in T2w Axial format.
+    [r'G:\Datasets\Medical\datas\manifest-hjL8tlLc1556886850502670511\metadata.csv', "t2tsetra" ], # second elements is for filterate the targets in T2w Axial format.
+    [r'G:\Datasets\Medical\datas\manifest-MQ0R2nDM7840353659486226295\metadata.csv', "t2tsetra"]  # second elements is for filterate the targets in T2w Axial format.
 ]
-
 root_dir = r"G:\Datasets\Medical\datas\manifest-gJIZVVFt6412408718812805737"
-
 output_path = r"G:\Datasets\Medical\datas\revised_data"
-
-if not os.path.exists(output_path):
-    os.mkdir(output_path)
-
-train_test_rate = 0.8
+train_test_rate = 0.8 # rate for split the dataset into training set and test sets.
 """
 Change the paths above to your own path of Prostate datasets.
 """
 
+if not os.path.exists(output_path):
+    os.mkdir(output_path)
 
 def get_vol_from_dicom_dir(dicom_dir, verbose=False):
     """
@@ -91,7 +86,6 @@ for meta_path, target_type in meta_data_list:
 # split train and test sets.
 random.shuffle(meta_data)
 train_length = int(len(meta_data) * train_test_rate)
-
 
 with open("meta_data_train.json", "w") as f:
     json.dump(meta_data[:train_length], f)

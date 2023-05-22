@@ -35,8 +35,6 @@ def train_one_epoch(g_model: torch.nn.Module,
     header = 'Epoch: [{}]'.format(epoch)
     print_freq = 20
 
-    # accum_iter = args.accum_iter
-
     g_optimizer.zero_grad()
     d_optimizer.zero_grad()
 
@@ -45,11 +43,8 @@ def train_one_epoch(g_model: torch.nn.Module,
         
     # b_prev : batch previous image......
     for data_iter_step, (b_prev, b_gt, b_next) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
-        
-        accum_iter = args.accum_iter
-    
         # we use a per iteration (instead of per epoch) lr scheduler
-        if data_iter_step % accum_iter == 0:
+        if data_iter_step % 20 == 0:
             lr_sched.adjust_learning_rate(g_optimizer, data_iter_step / len(data_loader) + epoch, args)
             lr_sched.adjust_learning_rate(d_optimizer, data_iter_step / len(data_loader) + epoch, args)  
         
@@ -80,7 +75,7 @@ def train_one_epoch(g_model: torch.nn.Module,
     
         d_loss_value = d_loss.item()
         
-        if epoch >= 20 and epoch % 4 == 0:
+        if epoch >= 20 and epoch % args.update_d_period == 0:
             d_optimizer.zero_grad()
             d_loss.backward()
             d_optimizer.step()
@@ -158,9 +153,8 @@ def train_one_epoch(g_model: torch.nn.Module,
         g_vgg_loss_reduce = misc.all_reduce_mean(g_vgg_loss_value)
         g_loss_reduce = misc.all_reduce_mean(g_loss_value)
         
-        
 
-        if log_writer is not None and (data_iter_step + 1) % accum_iter == 0: 
+        if log_writer is not None and (data_iter_step + 1) % 100 == 0: 
             epoch_1000x = int((data_iter_step / len(data_loader) + epoch) * 1000)
             log_writer.add_scalar("lr/lr", lr, epoch_1000x)
             log_writer.add_scalar("train/d_loss_real", d_loss_real_reduce , epoch_1000x)
