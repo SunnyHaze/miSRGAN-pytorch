@@ -35,11 +35,12 @@ train_main.py \
     --log_dir ./output_dir_5/ \
 2> train_error_5.log 1>train_logs_5.log
 ```
-You need to change the argument `data_path` to your generated `meta_data_train.json` file path.
+You need to change the argument `data_path` to your generated `.pkl` file path, and `meta_data_path` to `meta_data_train.json` file path.
 
 > Note that if you change the training datasets, you may have to re-balance the `update_d_period` parametes to make sure the discriminator and the generator still balanced well.
 
 ## Evaluation
+```
 torchrun  \
     --standalone    \
     --nnodes=1     \
@@ -54,7 +55,7 @@ evaluate_main.py \
     --output_dir ./eval_dir_3/ \
     --log_dir ./eval_dir_3/ \
 2> test_error_3.log 1>test_logs_3.log
-
+```
 ## Citation
 ```
 @article{
