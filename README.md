@@ -18,7 +18,7 @@ This code is implemented on Ubuntu 20.04, the command may need slight changes to
 - PyToch 1.11
 - CUDA 11.2
 
-Please use `pip install -`r requirements.txt` to install the required packages in advance.
+Please use `pip install -r requirements.txt` to install the required packages in advance.
 
 ## Quick Start
 - Remanage dataset
