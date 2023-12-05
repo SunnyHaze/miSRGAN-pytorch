@@ -131,11 +131,12 @@ def test_one_epoch(model: torch.nn.Module,
     
 
 def get_args_parser():
-    parser = argparse.ArgumentParser('IML-ViT training', add_help=False)
+    parser = argparse.ArgumentParser('miSRGAN evaluation', add_help=False)
     parser.add_argument('--batch_size', default=64, type=int,
                         help='Batch size per GPU (effective batch size is batch_size * accum_iter * # gpus')
     parser.add_argument('--test_batch_size', default=2, type=int,)
-    parser.add_argument('--checkpoint_path', default = '/root/workspace/IML-ViT/output_dir_2', type=str, help='path to vit pretrain model by MAE')
+    parser.add_argument('--checkpoint_path', default = '/root/workspace/miSRGAN/output_dir', type=str,
+                        help='a dir that contains saved checkpoints outputed by training processs.')
     parser.add_argument('--epochs', default=200, type=int)
 
     # Optimizer parameters
@@ -143,10 +144,11 @@ def get_args_parser():
                         help='weight decay (default: 0.05)')
 
     # Dataset parameters
-    parser.add_argument('--meta_data_path', default='/root/Dataset/CASIA2.0_revised/', type=str,
-                        help='meta data json file path')
-    parser.add_argument('--data_path', default='/root/Dataset/CASIA1.0 dataset', type=str,
+    parser.add_argument('--data_path', default='/root/Dataset/prostate', type=str,
                         help='dataset path')
+    parser.add_argument('--meta_data_path', default='/root/Dataset/prostate_train.json', type=str,
+                        help='meta data json file path')
+
 
     parser.add_argument('--output_dir', default='./output_dir',
                         help='path where to save, empty for no saving')

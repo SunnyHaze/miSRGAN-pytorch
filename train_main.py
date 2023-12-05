@@ -37,9 +37,10 @@ from train_engine import train_one_epoch
 
 def get_args_parser():
     parser = argparse.ArgumentParser('miSRGAN training', add_help=False)
+    
+    # Training parameters
     parser.add_argument('--batch_size', default=64, type=int,
                         help='Batch size per GPU')
-    
     parser.add_argument('--epochs', default=200, type=int)
     parser.add_argument('--update_d_period', default=5, type=int, help="How many epoch for update discriminator periodically. Can balance the discriminator and the generator during training. ")
     
@@ -63,11 +64,12 @@ def get_args_parser():
                         help='epochs to warmup LR')
 
     # Dataset parameters
-    parser.add_argument('--meta_data_path', default='/root/Dataset/CASIA2.0_revised/', type=str,
+    parser.add_argument('--meta_data_path', default='/root/Dataset/meta_data_test.json', type=str,
                         help='meta data json file path')
-    parser.add_argument('--data_path', default='/root/Dataset/CASIA1.0 dataset', type=str,
+    parser.add_argument('--data_path', default='/root/Dataset/prostate', type=str,
                         help='dataset path(PKL file directory)')
 
+    # Logging parameters
     parser.add_argument('--output_dir', default='./output_dir',
                         help='path where to save, empty for no saving')
     parser.add_argument('--log_dir', default='./output_dir',
@@ -178,7 +180,6 @@ def main(args):
         
         model_d = torch.nn.parallel.DistributedDataParallel(model_d, device_ids=[args.gpu], find_unused_parameters=False) # TODO FindersUnusedParameters False for Acceleration
         model_d_without_ddp = model_d.module
-                       
     
     # following timm: set wd as 0 for bias and norm layers
     args.opt='AdamW'
