@@ -26,6 +26,7 @@ Please use `pip install -r requirements.txt` to install the required packages in
   - You should follow the Python script in `./revise_datasets` dir to generate the datasets on your device.  Pay attention to the output `meta_data_train.json` and the `meta_data_test.json` file, which is important for Dataloader during the coming training.
 
 - Then you can start the multi-GPU training with the following commands:
+  
 ```
 torchrun  \
     --standalone \
@@ -45,9 +46,10 @@ train_main.py \
     --log_dir ./output_dir/ \
 2> train_error.log 1>train_logs.log
 ```
+
 You need to change the argument `data_path` to the path containing your generated `.pkl` file, and the argument `meta_data_path` to the `meta_data_train.json` file path.
 
-> Note that if you change the training datasets, you may have to re-balance the `update_d_period` parametes to make sure the discriminator and the generator still balanced well.
+> Note that if you change the training datasets, you may have to re-balance the `update_d_period` parametes to make sure the discriminator and the generator still balanced well. Besides, it may need less `epoch` depends on your task.
 
 ## Evaluation
 ```
@@ -66,6 +68,12 @@ evaluate_main.py \
     --log_dir ./eval_dir/ \
 2> test_error.log 1>test_logs.log
 ```
+
+After running this code, you will find the output results under your `--output_dir`. It should look like this:
+
+![](images/test_results.png)
+
+
 ## Citation
 ```
 @article{

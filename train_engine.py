@@ -12,8 +12,7 @@ import torch.nn.functional as F
 from torchvision.transforms.functional import resize
 
 def denormalize(image):
-    return image
-    return (image + 1) / 2 * 255
+    return (image + 1) / 2
 
 
 
